@@ -4,7 +4,9 @@ const express = require("express");
 const app = express();
 
 app.get("/tasks", function(req, res) {
-	res.send("Hello World!");
+	res.json({
+		message: "Hello World!"
+	});
 });
 
 module.exports.tasks = serverless(app);
