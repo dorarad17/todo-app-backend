@@ -3,7 +3,16 @@ const uuidv4 = require("uuid/v4");
 const serverless = require("serverless-http");
 const express = require("express");
 const app = express();
+const mysql = require("mysql");
 
+const connection = mysql.createConnection({
+	host: "example.orgtr-course-rds.cettgt1wpnod.eu-west-2.rds.amazonaws.com",
+	user: "xxxx",
+	password: "xxxxx",
+	database: "xxxx"
+});
+
+// Retrieving tasks
 app.get("/tasks", function(req, res) {
 	res.json({
 		tasks: [
@@ -34,6 +43,27 @@ app.get("/tasks", function(req, res) {
 				priority: 3
 			}
 		]
+	});
+});
+
+// Creating tasks
+app.post("/tasks", function(req, res) {
+	res.json({
+		message: "post working"
+	});
+});
+
+// Updating tasks
+app.put("/tasks/:taskId", function(req, res) {
+	res.json({
+		message: "put working"
+	});
+});
+
+// Deleting tasks
+app.delete("/tasks/:taskId", function(req, res) {
+	res.json({
+		message: "delete working"
 	});
 });
 
