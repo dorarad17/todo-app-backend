@@ -3,6 +3,7 @@ const uuidv4 = require("uuid/v4");
 const serverless = require("serverless-http");
 const express = require("express");
 const app = express();
+app.use(express.json());
 const mysql = require("mysql");
 
 const connection = mysql.createConnection({
@@ -32,8 +33,25 @@ app.get("/tasks", function(req, res) {
 
 // Creating tasks
 app.post("/tasks", function(req, res) {
-	res.json({
-		message: "post working"
+	// accept infor from client on what is created
+
+	const taskToInsert = req.body;
+	taskToInsert.taskId = uuidv4();
+
+	// take info and pre-populate a SQL INSERT statement
+	// execute the statement
+	connection.query("INSERT INTO `tasks` SET ?", taskToInsert, function(
+		error,
+		results,
+		fields
+	) {
+		if (error) {
+			console.error("error inserting task", error);
+			res.status(500).json({ errorMessage: error });
+		} else {
+			// return to the client info on the task created
+			res.json({ tasks: taskToInsert });
+		}
 	});
 });
 
