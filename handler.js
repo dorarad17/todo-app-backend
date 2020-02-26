@@ -56,9 +56,27 @@ app.post("/tasks", function(req, res) {
 
 // Updating tasks
 app.put("/tasks/:taskId", function(req, res) {
-	res.json({
-		message: "put working"
-	});
+	// accept from client what is being updated
+	const taskToUpdate = req.params.taskId;
+
+	// var of SQL statement
+	var sqlUpdate =
+		"UPDATE `tasks` SET `completed` = ?, `priority` = ?, `description` = ? WHERE `taskId` = ?";
+
+	// execute statement
+	connection.query(
+		sqlUpdate,
+		[req.body.completed, req.body.priority, req.body.description, taskToUpdate],
+		function(error, results, fields) {
+			if (error) {
+				console.error("error updating task", error);
+				res.status(500).json({ errorMessage: error });
+			} else {
+				// return to client info on task which was updated
+				res.json({ updatedTask: taskToUpdate });
+			}
+		}
+	);
 });
 
 // Deleting tasks
