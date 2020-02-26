@@ -33,8 +33,7 @@ app.get("/tasks", function(req, res) {
 
 // Creating tasks
 app.post("/tasks", function(req, res) {
-	// accept infor from client on what is created
-
+	// accept info from client on what is created
 	const taskToInsert = req.body;
 	taskToInsert.taskId = uuidv4();
 
@@ -64,9 +63,24 @@ app.put("/tasks/:taskId", function(req, res) {
 
 // Deleting tasks
 app.delete("/tasks/:taskId", function(req, res) {
-	res.json({
-		message: "delete working"
-	});
+	// accept info from client on what is being deleted
+	const taskToDelete = req.params.taskId;
+
+	// take info and pre-populate a SQL DELETE statement
+	// execute the statement
+	connection.query(
+		"DELETE FROM `tasks` WHERE `taskId` = ?",
+		taskToDelete,
+		function(error, results, fields) {
+			if (error) {
+				console.error("error deleting task", error);
+				res.status(500).json({ errorMessage: error });
+			} else {
+				// return to the client info on the task deleted
+				res.json({ deletedTask: taskToDelete });
+			}
+		}
+	);
 });
 
 module.exports.tasks = serverless(app);
